@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Griffin Email Performance Hub — go.griffincapital.com/email-hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gc-orange:#EE7624; --gc-orange-lt:#fef4ec; --gc-orange-mid:#f9d4b3;
+    --gc-bg:#435363; --gc-sky:#7C98AB; --gc-cool:#3F4450;
+    --gc-deep:#1E3641; --gc-pale:#F2F2F5; --gc-white:#ffffff;
+    --gc-rule:#e0e4ea; --gc-rule-dark:#c8cdd6; --gc-band:#f7f8fa;
+    --font:'Lato',Arial,sans-serif; --r:4px; --r-sm:2px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--gc-pale);color:var(--gc-cool);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+  .topbar{background:var(--gc-white);border-bottom:3px solid var(--gc-orange);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,0.06);position:sticky;top:0;z-index:50}
+  .topbar-left{display:flex;align-items:center;gap:16px}
+  .gc-logo{height:36px;width:auto;display:block}
+  .topbar-div{width:1px;height:26px;background:var(--gc-rule)}
+  .topbar-label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gc-sky)}
+  .topbar-right{display:flex;align-items:center;gap:8px}
+  .btn-outline{background:var(--gc-white);border:1.5px solid var(--gc-rule-dark);color:var(--gc-cool);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;transition:border-color .12s,color .12s}
+  .btn-outline:hover{border-color:var(--gc-bg);color:var(--gc-deep)}
+  .btn-steel{background:var(--gc-bg);border:none;color:#fff;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;transition:background .12s;display:inline-flex;align-items:center;gap:6px}
+  .btn-steel:hover{background:var(--gc-deep)}
+  .btn-steel:active{opacity:0.85}
+  .btn-teal{background:#0f9e82;border:none;color:#fff;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;transition:background .12s;display:inline-flex;align-items:center;gap:6px}
+  .btn-teal:hover{background:#0b7d67}
+  .btn-teal:active{opacity:.85}font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;transition:background .12s}
+  .btn-orange{background:#EE7624!important;border:1.5px solid #EE7624!important;color:#ffffff!important;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;transition:background .15s,border-color .15s}
+  .btn-orange:hover{background:#1E3641!important;border-color:#1E3641!important;color:#ffffff!important}
+  .btn-orange:active{opacity:0.9}
+
+  .main{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 3rem}
+
+  .email-hdr{background:var(--gc-white);border:1px solid var(--gc-rule);border-left:4px solid var(--gc-orange);border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .email-hdr-main{flex:1;min-width:0}
+  .email-tag{display:block;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gc-sky);margin-bottom:5px}
+  .email-subject{font-size:16px;font-weight:700;color:var(--gc-deep);line-height:1.35;margin-bottom:10px}
+  .meta-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .meta-chip{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gc-sky)}
+  .meta-chip strong{color:var(--gc-cool);font-weight:700}
+  .meta-sep{width:3px;height:3px;border-radius:50%;background:var(--gc-rule-dark)}
+  .sent-badge{display:inline-flex;align-items:center;gap:7px;background:var(--gc-orange-lt);color:var(--gc-orange);border:1.5px solid var(--gc-orange-mid);font-size:11px;font-weight:700;padding:8px 14px;border-radius:var(--r-sm);white-space:nowrap;flex-shrink:0}
+  .sent-dot{width:7px;height:7px;background:var(--gc-orange);border-radius:50%}
+
+  .kpi-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-bottom:1.25rem}
+  .kpi{background:var(--gc-white);border:1px solid var(--gc-rule);border-top:3px solid var(--gc-orange);border-radius:var(--r);padding:1.25rem 1.5rem}
+  .kpi-val{font-size:38px;font-weight:300;color:var(--gc-orange);line-height:1;margin-bottom:7px;letter-spacing:-0.5px}
+  .kpi-lbl{font-size:15px;font-weight:900;letter-spacing:0.04em;text-transform:uppercase;color:var(--gc-deep)}
+  .kpi-sub{font-size:11px;color:var(--gc-sky);margin-top:4px}
+
+  .two-col{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:1rem;margin-bottom:1.25rem;align-items:start}
+
+  .card{background:var(--gc-white);border:1px solid var(--gc-rule);border-radius:var(--r);overflow:hidden}
+  .card-hdr{background:var(--gc-bg);padding:10px 16px;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#c8d4dc}
+  .card-body{padding:1.125rem 1.25rem}
+
+  .bar-section{margin-bottom:1.25rem}
+  .bar-row{margin-bottom:10px}
+  .bar-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .bar-lbl{font-size:12px;color:var(--gc-cool)}
+  .bar-pct{font-size:12px;font-weight:700;color:var(--gc-orange)}
+  .bar-track{height:6px;background:var(--gc-pale);border-radius:2px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:2px}
+  .bf-o{background:var(--gc-orange)} .bf-b{background:var(--gc-bg)} .bf-s{background:var(--gc-sky)}
+
+  .stbl{width:100%;border-collapse:collapse}
+  .stbl tr{border-bottom:1px solid var(--gc-rule)}
+  .stbl tr:last-child{border-bottom:none}
+  .stbl td{padding:7px 0;font-size:12.5px}
+  .stbl td:first-child{color:var(--gc-sky);width:60%}
+  .stbl td:last-child{text-align:right;font-weight:700;color:var(--gc-deep)}
+  .stbl td.v-o{color:var(--gc-orange)}
+  .stbl tr.grp td{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gc-white);background:var(--gc-bg);padding:6px 8px;border-bottom:none}
+  .stbl tr.grp td:last-child{text-align:left}
+
+  .donut-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:.25rem 0}
+  .d-legend{width:100%}
+  .d-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--gc-rule)}
+  .d-item:last-child{border-bottom:none}
+  .d-swatch{width:4px;height:30px;border-radius:2px;flex-shrink:0}
+  .d-name{flex:1;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gc-sky)}
+  .d-count{font-weight:900;font-size:17px;color:var(--gc-deep);line-height:1}
+  .d-pct{font-size:11px;color:var(--gc-sky);margin-left:3px}
+  .d-link{display:inline-flex;align-items:center;gap:4px;background:var(--gc-orange-lt);color:var(--gc-orange);font-size:10px;font-weight:700;padding:3px 8px;border-radius:var(--r-sm);text-decoration:none;white-space:nowrap;border:1px solid var(--gc-orange-mid);margin-left:auto;flex-shrink:0;transition:background .12s}
+  .d-link:hover{background:#fde8d0}
+
+  .ctbl{width:100%;border-collapse:collapse;table-layout:fixed}
+  .ctbl thead tr{background:var(--gc-bg)}
+  .ctbl thead th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#c8d4dc;padding:10px 12px;text-align:left}
+  .ctbl thead th.cn{text-align:right;width:74px}
+  .ctbl thead th.cd{text-align:left;width:190px}
+  .ctbl tbody tr{border-bottom:1px solid var(--gc-rule)}
+  .ctbl tbody tr:nth-child(even){background:var(--gc-band)}
+  .ctbl tbody tr:last-child{border-bottom:none}
+  .ctbl tbody td{padding:10px 12px;vertical-align:middle;font-size:12px}
+  .ctbl tbody td.cn{text-align:right;font-weight:900;color:var(--gc-deep);font-size:14px}
+  .ctbl tbody td.cd{padding-left:12px}
+  .link-url{color:var(--gc-bg);font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;max-width:100%}
+  .cbar{height:2px;background:var(--gc-rule);margin-top:4px;overflow:hidden}
+  .cbar-fill{height:100%;background:var(--gc-orange);opacity:.4}
+  .dl-badge{display:inline-flex;align-items:center;gap:5px;background:var(--gc-orange-lt);color:var(--gc-orange);font-size:10px;font-weight:700;padding:4px 9px;border-radius:var(--r-sm);text-decoration:none;white-space:nowrap;border:1px solid var(--gc-orange-mid);transition:background .12s}
+  .dl-badge:hover{background:#fde8d0}
+  .sf-badge{display:inline-flex;align-items:center;gap:5px;background:#e8f2fc;color:#0070d2;font-size:10px;font-weight:700;padding:4px 9px;border-radius:var(--r-sm);text-decoration:none;white-space:nowrap;border:1px solid #b8d4f0;transition:background .12s}
+  .sf-badge:hover{background:#cce1f7}
+  .sf-badge svg{flex-shrink:0}
+  .sf-campaign-link{display:inline-flex;align-items:center;gap:5px;color:#0070d2;font-size:11px;font-weight:700;text-decoration:none;padding:2px 0}
+  .sf-campaign-link:hover{text-decoration:underline}
+
+  .pg-footer{border-top:1px solid var(--gc-rule);margin-top:2rem;padding-top:1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  .pg-footer-l{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gc-sky)}
+  .pg-footer-r{font-size:10px;color:var(--gc-sky)}
+
+  /* ── Modals ── */
+  .mbg{display:none;position:fixed;inset:0;background:rgba(30,54,65,.55);z-index:200;align-items:center;justify-content:center}
+  .mbg.open{display:flex}
+  .modal{background:var(--gc-white);border-radius:var(--r);border-top:3px solid var(--gc-orange);width:90%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(30,54,65,.2)}
+  .modal-head{background:var(--gc-bg);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+  .modal-head-t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c8d4dc}
+  .modal-x{background:none;border:none;color:rgba(255,255,255,.5);font-size:24px;cursor:pointer;padding:0 6px;line-height:1}
+  .modal-x:hover{color:#fff}
+  .modal-body{padding:1.5rem}
+  .msec{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gc-orange);margin:1.25rem 0 .75rem;padding-bottom:7px;border-bottom:1px solid var(--gc-rule)}
+  .msec:first-child{margin-top:0}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .fg{display:flex;flex-direction:column;gap:4px}
+  .fg.full{grid-column:1/-1}
+  .fg label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gc-sky)}
+  .fg input,.fg textarea{font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid var(--gc-rule-dark);border-radius:var(--r-sm);color:var(--gc-deep);background:var(--gc-white);transition:border-color .12s;width:100%}
+  .fg input:focus,.fg textarea:focus{outline:none;border-color:var(--gc-orange)}
+  .fg textarea{resize:vertical;min-height:58px;line-height:1.5}
+  .crow{display:grid;grid-template-columns:1.6fr 52px 52px 1fr 1fr 28px;gap:5px;margin-bottom:5px;align-items:center}
+  .crow input{font-family:var(--font);font-size:10px;padding:5px 7px;border:1px solid var(--gc-rule-dark);border-radius:var(--r-sm);background:var(--gc-white);color:var(--gc-deep);width:100%}
+  .crow input:focus{outline:none;border-color:var(--gc-orange)}
+  .crow-dl{display:grid;grid-template-columns:100px 1fr;gap:4px}
+  .chdr{display:grid;grid-template-columns:1.6fr 52px 52px 1fr 1fr 28px;gap:5px;margin-bottom:5px}
+  .chdr span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--gc-sky)}
+  .btn-rm{background:none;border:1px solid var(--gc-rule-dark);border-radius:var(--r-sm);color:var(--gc-sky);font-size:16px;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+  .btn-rm:hover{background:#fee;border-color:#f99;color:#c33}
+  .btn-add-row{background:none;border:1.5px dashed var(--gc-rule-dark);border-radius:var(--r-sm);color:var(--gc-sky);font-size:12px;font-family:var(--font);font-weight:700;padding:6px 12px;cursor:pointer;margin-top:6px;transition:all .12s;width:100%}
+  .btn-add-row:hover{border-color:var(--gc-orange);color:var(--gc-orange)}
+  .modal-ft{padding:1rem 1.5rem;background:var(--gc-pale);border-top:1px solid var(--gc-rule);display:flex;justify-content:flex-end;gap:8px}
+  .html-modal-ft{padding:1rem 1.5rem;background:var(--gc-pale);border-top:1px solid var(--gc-rule);display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .btn-cancel{background:var(--gc-white);border:1.5px solid var(--gc-rule-dark);color:var(--gc-cool);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border-radius:var(--r-sm);cursor:pointer;transition:border-color .12s}
+  .btn-cancel:hover{border-color:var(--gc-bg)}
+  .btn-apply{background:var(--gc-orange);border:none;color:#fff;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:7px 20px;border-radius:var(--r-sm);cursor:pointer;transition:background .12s}
+  .btn-apply:hover{background:#d4661a}
+  .html-modal{max-width:860px}
+  .html-editor-wrap textarea{width:100%;height:400px;border:1px solid var(--gc-rule-dark);border-radius:var(--r-sm);background:#1a2530;color:#b8cdd8;font-family:'Courier New',Consolas,monospace;font-size:11px;line-height:1.6;padding:14px 16px;resize:vertical;outline:none;display:block}
+  .html-editor-hint{font-size:11px;color:var(--gc-sky);margin-top:8px;line-height:1.5}
+
+  /* ── Import modal ── */
+  .import-modal{max-width:780px}
+  .imp-tabs{display:flex;border-bottom:2px solid var(--gc-rule);margin-bottom:1.25rem}
+  .imp-tab{background:none;border:none;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gc-sky);padding:8px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .12s,border-color .12s}
+  .imp-tab.active{color:var(--gc-orange);border-bottom-color:var(--gc-orange)}
+  .imp-panel{display:none}
+  .imp-panel.active{display:block}
+  .imp-paste-area{width:100%;height:200px;border:1px solid var(--gc-rule-dark);border-radius:var(--r-sm);font-family:'Courier New',Consolas,monospace;font-size:11px;line-height:1.6;padding:10px 12px;resize:vertical;outline:none;color:var(--gc-deep);background:var(--gc-pale)}
+  .imp-paste-area:focus{border-color:var(--gc-orange);background:var(--gc-white)}
+  .imp-result{margin-top:10px;padding:10px 12px;border-radius:var(--r-sm);font-size:12px;display:none}
+  .imp-result.ok{background:#e4f7f3;color:#085041;border:1px solid #5dcaa5;display:block}
+  .imp-result.err{background:#fee2e2;color:#7f1d1d;border:1px solid #f09595;display:block}
+  .bookmarklet-box{background:var(--gc-pale);border:1px solid var(--gc-rule);border-radius:var(--r-sm);padding:1rem 1.125rem;margin-bottom:1rem}
+  .bookmarklet-link{display:inline-flex;align-items:center;gap:8px;background:var(--gc-orange);color:#fff;font-family:var(--font);font-size:12px;font-weight:700;padding:9px 18px;border-radius:var(--r-sm);text-decoration:none;cursor:grab;border:2px dashed rgba(255,255,255,.4);margin:10px 0 6px}
+  .bookmarklet-link:active{cursor:grabbing}
+  .bookmarklet-instructions{font-size:11px;color:var(--gc-sky);line-height:1.7;margin-top:10px}
+  .bookmarklet-instructions strong{color:var(--gc-cool)}
+  .bookmarklet-instructions ol{margin-left:1.25rem;margin-top:4px}
+  .bookmarklet-instructions li{margin-bottom:3px}
+  .code-preview{background:#1a2530;color:#b8cdd8;font-family:'Courier New',monospace;font-size:10px;line-height:1.5;padding:10px 12px;border-radius:var(--r-sm);overflow-x:auto;white-space:pre;margin-top:8px;max-height:100px}
+  .imp-field-preview{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+  .imp-field-preview-item{font-size:11px;padding:5px 8px;background:var(--gc-pale);border-radius:var(--r-sm);border:1px solid var(--gc-rule)}
+  .imp-field-preview-item span{color:var(--gc-sky);display:block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+
+  .btn-lib{background:var(--gc-white);border:1.5px solid var(--gc-rule-dark);color:var(--gc-cool);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;transition:border-color .12s,color .12s;display:inline-flex;align-items:center;gap:6px;position:relative}
+  .btn-lib:hover{border-color:var(--gc-bg);color:var(--gc-deep)}
+  .lib-count{background:var(--gc-orange);color:#fff;font-size:9px;font-weight:900;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center;line-height:15px}
+
+  /* ── Library modal ── */
+  .lib-modal{max-width:680px}
+  .lib-empty{text-align:center;padding:2rem;color:var(--gc-sky);font-size:13px}
+  .lib-empty svg{opacity:.3;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto}
+  .lib-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+  .lib-item{background:var(--gc-pale);border:1px solid var(--gc-rule);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px}
+  .lib-item-info{flex:1;min-width:0}
+  .lib-item-name{font-size:13px;font-weight:700;color:var(--gc-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lib-item-meta{font-size:11px;color:var(--gc-sky);margin-top:2px}
+  .lib-item-actions{display:flex;gap:6px;flex-shrink:0}
+  .btn-lib-load{background:var(--gc-bg);border:none;color:#fff;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:var(--r-sm);cursor:pointer;transition:background .12s}
+  .btn-lib-load:hover{background:var(--gc-deep)}
+  .btn-lib-del{background:none;border:1px solid var(--gc-rule-dark);color:var(--gc-sky);font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:var(--r-sm);cursor:pointer;transition:all .12s}
+  .btn-lib-del:hover{background:#fee;border-color:#f99;color:#c33}
+  .lib-save-row{display:flex;gap:8px;padding-top:1rem;border-top:1px solid var(--gc-rule)}
+  .lib-save-input{flex:1;font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid var(--gc-rule-dark);border-radius:var(--r-sm);color:var(--gc-deep);background:var(--gc-white);outline:none}
+  .lib-save-input:focus{border-color:var(--gc-orange)}
+  .btn-lib-save{background:var(--gc-orange);border:none;color:#fff;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;border-radius:var(--r-sm);cursor:pointer;white-space:nowrap;transition:background .12s}
+  .btn-lib-save:hover{background:#d4661a}
+
+  /* ── URL-launch notice banner ── */
+  .launch-banner{background:#e4f7f3;border:1px solid #5dcaa5;border-radius:var(--r);padding:10px 16px;margin-bottom:1.25rem;display:none;align-items:center;gap:10px;font-size:12px;color:#085041}
+  .launch-banner.show{display:flex}
+  .launch-banner strong{font-weight:700}
+  .launch-banner-x{background:none;border:none;color:#085041;font-size:16px;cursor:pointer;margin-left:auto;opacity:.6;padding:0 4px}
+  .launch-banner-x:hover{opacity:1}
+    body{background:white}
+    .topbar{box-shadow:none;position:static}
+    .mbg{display:none!important}
+    .main{max-width:100%;padding:.5rem}
+    .card-hdr,.ctbl thead tr,.stbl tr.grp td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .kpi-val,.email-hdr,.sent-badge{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+  @media(max-width:700px){
+    .kpi-row,.two-col,.fgrid{grid-template-columns:1fr}
+    .email-hdr{flex-direction:column}
+    .topbar{padding:0 1rem}
+    .topbar-label{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <img id="gc-logo" class="gc-logo"
+      src="https://www.griffincapital.com/wp-content/themes/griffin-theme/images/logo-main-pe.svg"
+      alt="Griffin Capital">
+    <span id="gc-fb" style="display:none;font-size:14px;font-weight:900;letter-spacing:.06em;color:#435363;text-transform:uppercase">Griffin Capital</span>
+    <div class="topbar-div"></div>
+    <div class="topbar-label">Account Engagement &mdash; Email Performance</div>
+  </div>
+  <div class="topbar-right">
+    <button id="btn-edit-data" class="btn-outline">Edit data</button>
+    <button id="btn-library" class="btn-lib">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="4" height="12" rx="1"/><rect x="6" y="2" width="4" height="12" rx="1"/><rect x="11" y="2" width="4" height="12" rx="1"/></svg>
+      Reports
+      <span class="lib-count" id="lib-count">0</span>
+    </button>
+    <button id="btn-import" class="btn-teal">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3"/><rect x="2" y="12" width="12" height="2" rx="1"/></svg>
+      Import MCAE data
+    </button>
+    <button id="btn-email-html" class="btn-steel">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 6 2 8 4 10"/><polyline points="12 6 14 8 12 10"/><line x1="9" y1="3" x2="7" y2="13"/></svg>
+      Email HTML
+    </button>
+    <button id="btn-preview-email" class="btn-steel">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>
+      Preview email
+    </button>
+    <button id="btn-print" class="btn-orange" style="background:#EE7624;color:#ffffff;border:1.5px solid #EE7624;font-family:'Lato',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;gap:5px">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><polyline points="4 7 4 2 12 2 12 7"/><rect x="1" y="7" width="14" height="6" rx="1"/><polyline points="4 13 4 16 12 16 12 13"/></svg>
+      Print / Save PDF
+    </button>
+  </div>
+</div>
+
+<!-- Auto-load banner (shown when URL params pre-populate the tool) -->
+<div class="launch-banner" id="launch-banner">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3"/><rect x="2" y="12" width="12" height="2" rx="1"/></svg>
+  <span><strong>Report auto-loaded</strong> from bookmarklet — all fields pre-populated from MCAE.</span>
+  <button class="launch-banner-x" id="launch-banner-x">&times;</button>
+</div>
+
+<!-- Dashboard -->
+<div class="main" id="dashboard"></div>
+
+<!-- Edit data modal -->
+<div class="mbg" id="data-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-head-t">Edit email data</span>
+      <button class="modal-x" data-close="data-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="msec">Email details</div>
+      <div class="fgrid">
+        <div class="fg full"><label>Campaign name</label><input id="f-campaign" value="2025 QOZF I (MD Composite) Tax Packages (Advisor) Email_3.30.26"></div>
+        <div class="fg full"><label>Salesforce campaign URL <span style="font-weight:400;text-transform:none;letter-spacing:0">(paste the Salesforce campaign record link)</span></label><input id="f-sf-campaign-url" placeholder="https://gcpe.lightning.force.com/lightning/r/Campaign/…/view"></div>
+        <div class="fg full"><label>Subject line</label><textarea id="f-subject">Griffin Capital Qualified Opportunity Zone Fund, L.P. - Schedule K-1, Quarterly Account Statement and 2025 Audited Financials – Now Available</textarea></div>
+        <div class="fg"><label>Sent date</label><input id="f-date" value="Mar 30, 2026 3:40 PM"></div>
+        <div class="fg"><label>Created by</label><input id="f-author" value="Joey Feldmann"></div>
+        <div class="fg full"><label>Sent to (list names)</label><input id="f-lists" value="Griffin Internal Static List + IR, Investor Operations, 2025 QOZF I (MD Composite) Tax Packages (Advisor) - Dynamic List"></div>
+        <div class="fg"><label>Email send type</label><input id="f-sendtype" value="Immediate"></div>
+      </div>
+      <div class="msec">Delivery &amp; engagement numbers</div>
+      <div class="fgrid">
+        <div class="fg"><label>Total sent</label><input id="f-sent" type="number" value="339"></div>
+        <div class="fg"><label>Total delivered</label><input id="f-delivered" type="number" value="336"></div>
+        <div class="fg"><label>Bounced (soft)</label><input id="f-soft" type="number" value="1"></div>
+        <div class="fg"><label>Bounced (hard)</label><input id="f-hard" type="number" value="2"></div>
+        <div class="fg"><label>Total HTML opens</label><input id="f-totalopens" type="number" value="193"></div>
+        <div class="fg"><label>Unique HTML opens</label><input id="f-opens" type="number" value="129"></div>
+        <div class="fg"><label>Total clicks</label><input id="f-tclicks" type="number" value="109"></div>
+        <div class="fg"><label>Unique clicks</label><input id="f-uclicks" type="number" value="43"></div>
+        <div class="fg"><label>Total opt outs</label><input id="f-optouts" type="number" value="0"></div>
+        <div class="fg"><label>Spam complaints</label><input id="f-spam" type="number" value="0"></div>
+        <div class="fg"><label>Prospects on recipient lists</label><input id="f-prospects" type="number" value="405"></div>
+        <div class="fg"><label>Unmailable prospects</label><input id="f-unmailable" type="number" value="66"></div>
+      </div>
+      <div class="msec">Open rate — download link (Opened segment)</div>
+      <p style="font-size:11px;color:var(--gc-sky);margin-bottom:10px">Optionally attach a labeled download link to the Opened segment.</p>
+      <div class="fgrid">
+        <div class="fg"><label>Opened — link label</label><input id="f-ol-label" placeholder="e.g. Opened list"></div>
+        <div class="fg"><label>Opened — URL</label><input id="f-ol-url" placeholder="https://…"></div>
+      </div>
+      <div class="msec">Link clicks</div>
+      <div class="chdr"><span>URL</span><span>Unique</span><span>Total</span><span>Download (label + link)</span><span>SF Report URL</span><span></span></div>
+      <div id="ce"></div>
+      <button id="btn-add-row" class="btn-add-row">+ Add link</button>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-cancel" data-close="data-modal">Cancel</button>
+      <button id="btn-apply" class="btn-apply">Apply changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Email HTML modal -->
+<div class="mbg" id="html-modal">
+  <div class="modal html-modal">
+    <div class="modal-head">
+      <span class="modal-head-t">Email HTML</span>
+      <button class="modal-x" data-close="html-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="msec" style="margin-top:0">Paste your Pardot / MCAE email HTML</div>
+      <div class="html-editor-wrap">
+        <textarea id="html-input" spellcheck="false" placeholder="Paste email HTML here…"></textarea>
+      </div>
+      <p class="html-editor-hint">Paste the full HTML source from your email build, then click <strong>Preview email</strong> to view it full-screen on this page — no pop-ups needed.</p>
+    </div>
+    <div class="html-modal-ft">
+      <button class="btn-cancel" data-close="html-modal">Close</button>
+      <div style="display:flex;gap:8px">
+        <button id="btn-clear-html" class="btn-cancel">Clear</button>
+        <button id="btn-preview-from-modal" class="btn-steel">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>
+          Preview email
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reports library modal -->
+<div class="mbg" id="lib-modal">
+  <div class="modal lib-modal">
+    <div class="modal-head">
+      <span class="modal-head-t">Saved reports</span>
+      <button class="modal-x" data-close="lib-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="lib-list-wrap"></div>
+      <div class="lib-save-row">
+        <input id="lib-save-name" class="lib-save-input" placeholder="Name this report (e.g. QOZF I Tax Packages Mar 2026)…">
+        <button id="btn-lib-save" class="btn-lib-save">Save current report</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import MCAE data modal -->
+<div class="mbg" id="import-modal">
+  <div class="modal import-modal">
+    <div class="modal-head">
+      <span class="modal-head-t">Import MCAE data</span>
+      <button class="modal-x" data-close="import-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Tabs -->
+      <div class="imp-tabs">
+        <button class="imp-tab active" data-tab="tab-paste">Paste &amp; parse</button>
+        <button class="imp-tab" data-tab="tab-bookmarklet">Bookmarklet (one-click)</button>
+      </div>
+
+      <!-- Tab 1: Paste & Parse -->
+      <div class="imp-panel active" id="tab-paste">
+        <p style="font-size:12px;color:var(--gc-sky);margin-bottom:10px;line-height:1.6">
+          On the MCAE email report page, select all text (<strong>Ctrl+A</strong> / <strong>Cmd+A</strong>), copy it (<strong>Ctrl+C</strong>), then paste below. The parser will extract every stat and fill in your dashboard automatically.
+        </p>
+        <textarea id="imp-paste-input" class="imp-paste-area" placeholder="Paste your copied MCAE report text here…"></textarea>
+        <div id="imp-result" class="imp-result"></div>
+        <div id="imp-field-preview" class="imp-field-preview" style="display:none"></div>
+      </div>
+
+      <!-- Tab 2: Bookmarklet -->
+      <div class="imp-panel" id="tab-bookmarklet">
+        <div class="bookmarklet-box">
+          <p style="font-size:12px;font-weight:700;color:var(--gc-deep);margin-bottom:6px">Step 0 — Set your tool URL <span style="font-weight:400;color:var(--gc-sky)">(one time only)</span></p>
+          <p style="font-size:11px;color:var(--gc-sky);margin-bottom:6px">Paste the URL where this file lives (SharePoint link, GitHub Pages URL, etc.). The bookmarklet will open it pre-populated with MCAE data automatically.</p>
+          <div style="display:flex;gap:6px">
+            <input id="tool-url-input" style="flex:1;font-family:var(--font);font-size:12px;padding:7px 10px;border:1px solid var(--gc-rule-dark);border-radius:var(--r-sm);color:var(--gc-deep);background:var(--gc-white);outline:none" placeholder="https://your-sharepoint-or-github-url/griffin-email-report.html" value="https://go.griffincapital.com/email-hub">
+            <button id="btn-save-tool-url" class="btn-teal" style="white-space:nowrap">Save URL</button>
+          </div>
+          <p id="tool-url-status" style="font-size:10px;color:var(--gc-sky);margin-top:5px"></p>
+        </div>
+
+        <div class="bookmarklet-box">
+          <p style="font-size:12px;font-weight:700;color:var(--gc-deep);margin-bottom:4px">Step 1 — Drag this to your bookmarks bar</p>
+          <a id="bookmarklet-link" class="bookmarklet-link" href="#">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h12M2 8h12M2 12h8"/></svg>
+            GC: Copy MCAE report
+          </a>
+          <p style="font-size:10px;color:var(--gc-sky);margin-top:4px">Drag the orange button above to your browser's bookmarks bar.</p>
+        </div>
+
+        <div class="bookmarklet-instructions">
+          <strong>How to use it:</strong>
+          <ol>
+            <li>Open any sent email report in MCAE / Pardot</li>
+            <li>Click <strong>GC: Copy MCAE report</strong> in your bookmarks bar</li>
+            <li>You'll see an alert confirming the data was copied</li>
+            <li>Come back here, click <strong>Paste &amp; parse</strong> tab, paste, and import</li>
+          </ol>
+          <p style="margin-top:8px">The bookmarklet reads the report page's labels and values, formats them as structured text, and copies everything to your clipboard in one click — no manual selection needed.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-ft">
+      <button class="btn-cancel" data-close="import-modal">Cancel</button>
+      <button id="btn-run-import" class="btn-teal">Parse &amp; import data</button>
+    </div>
+  </div>
+</div>
+
+<!-- Default email HTML -->
+<textarea id="default-email-html" style="display:none"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head><title>Griffin Capital</title>
+<style>body{margin:0;padding:0;background-color:#f1f1f2;font-family:Arial,Helvetica,sans-serif}</style>
+</head>
+<body style="background-color:#f1f1f2">
+<table cellpadding="0" cellspacing="0" width="100%" style="background-color:#f1f1f2"><tr><td align="center">
+<table cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff"><tr><td>
+
+<table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
+<table cellpadding="0" cellspacing="0" width="640" style="background-color:#ffffff;margin:0 auto"><tr>
+<td width="50%" style="padding:40px"><a href="https://www.griffincapital.com/"><img src="https://www.griffincapital.com/wp-content/themes/griffin-theme/images/logo-main-pe.svg" alt="Griffin Capital" width="108" style="display:block;width:108px;height:auto;border:0"></a></td>
+<td width="50%" style="padding:40px;text-align:right;vertical-align:top">
+<div style="width:24px;height:24px;background:#EE7624;margin-left:auto"></div>
+<p style="margin:10px 0 0;font-size:12px;font-weight:700;color:#3f4450"><a href="https://www.griffincapital.com" style="text-decoration:none;color:#3f4450">www.griffincapital.com</a></p>
+</td></tr></table></td></tr></table>
+
+<table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
+<table cellpadding="0" cellspacing="0" width="640" style="background-color:#ffffff;margin:0 auto"><tr>
+<td style="padding:0 40px 40px 40px">
+<p style="font-size:20px;font-weight:700;color:#3f4450;line-height:1.4;margin:0 0 20px">RE: Griffin Capital Qualified Opportunity Zone Fund, L.P. — Schedule K-1, Quarterly Account Statement, and 2025 Audited Financials — Now Available</p>
+<table cellpadding="0" cellspacing="0" width="10%"><tr><td style="border-top:3px solid #ee7624;font-size:1px;line-height:1px">&nbsp;</td></tr></table>
+<div style="height:30px"></div>
+<div style="font-size:14px;color:#3f4450;line-height:1.6">
+<p style="margin:0 0 14px">March 30, 2026</p>
+<p style="margin:0 0 14px">Dear [Recipient First Name],</p>
+<p style="margin:0 0 14px">We are pleased to inform you that your client's tax package for Griffin Capital Qualified Opportunity Zone Fund, L.P. for the year ended December 31, 2025, is available for download on the Investor Portal.</p>
+<p style="margin:0 0 14px"><a href="https://gcpe.my.salesforce.com/sfc/p/5f0000091HDN/a/Pn000007EkWn/qWjJ1EKhcqY4R6PkbjxzzVNtSG7xYQtAXkKdtTPS8bc" style="color:#e67e22;font-weight:700;text-decoration:underline">Tax Package Memo 2025 (QOZFI)_MD Composite</a></p>
+<p style="margin:0 0 14px">In addition, your client's 4Q-2025 Account Statement and the 2025 Audited Financial Statements are available on the Investor Portal. Please note that you are receiving this notice in advance of your client, who will receive a similar notification tomorrow.</p>
+<p style="margin:0 0 14px">To access the Tax Package, please <a href="https://portal.griffincapital.com/ACPE/s/login/?ec=302&amp;startURL=%2FACPE%2Fs%2F" style="color:#e67e22;font-weight:700;text-decoration:underline">CLICK HERE</a> or visit <a href="https://portal.griffincapital.com" style="color:#e67e22;text-decoration:underline">https://portal.griffincapital.com</a>.</p>
+<p style="margin:0 0 14px">For any questions, please contact the Investor Operations team at <a href="mailto:InvestorOperations@griffincapital.com" style="color:#2c3e50;text-decoration:underline">InvestorOperations@griffincapital.com</a> or at <a href="tel:424.367.4250" style="color:#2c3e50;text-decoration:underline">424.367.4250</a>.</p>
+<p style="margin:0">Thank you,<br>Investor Operations<br>Griffin Capital Company, LLC</p>
+</div></td></tr></table></td></tr></table>
+
+<table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
+<table cellpadding="0" cellspacing="0" width="640" style="background-color:#1e3641;margin:0 auto"><tr>
+<td width="25%" style="padding:40px 20px 40px 40px;vertical-align:top"><a href="https://www.griffincapital.com/"><img src="https://www.griffincapital.com/wp-content/themes/griffin-theme/images/logo-main-pe.svg" alt="Griffin Capital" width="100" style="display:block;width:100px;height:auto;border:0"></a></td>
+<td width="41%" style="padding:40px 0;vertical-align:top"><p style="color:#ffffff;font-size:11px;line-height:1.6;margin:0"><strong>Griffin Capital Company, LLC</strong><br>266 Kansas Street<br>El Segundo, CA 90245</p></td>
+<td width="34%" style="padding:40px;vertical-align:top;text-align:right"><a href="https://www.linkedin.com/company/griffin-capital/"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><rect width="28" height="28" rx="4" fill="#0A66C2"/><path fill="#fff" d="M8.5 11.5H11V20H8.5zM9.75 10.5a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zM12.5 11.5h2.3v1.15h.03c.32-.6 1.1-1.15 2.27-1.15 2.55 0 2.9 1.6 2.9 3.68V20h-2.4v-4.43c0-.87-.02-1.98-1.21-1.98-1.21 0-1.39.95-1.39 1.92V20h-2.5z"/></svg></a></td>
+</tr></table></td></tr></table>
+
+<table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
+<table cellpadding="0" cellspacing="0" width="640" style="margin:0 auto"><tr>
+<td style="padding:20px 30px;text-align:center"><p style="font-size:11px;color:#3f4450;line-height:1.5;margin:0">2026 Griffin Capital Company, LLC. All Rights Reserved.<br><br>
+If you no longer wish to receive these emails, you may <a href="https://go.griffincapital.com/ReasonUnsubscribing" style="color:#3f4450;text-decoration:underline">unsubscribe</a>.</p></td>
+</tr></table></td></tr></table>
+
+</td></tr></table></td></tr></table>
+</body></html></textarea>
+
+<script>
+/* =============================================================
+   ALL JAVASCRIPT — global scope, DOMContentLoaded init
+   No IIFE, no onclick attributes anywhere
+   ============================================================= */
+
+/* ── State ── */
+var currentClicks = [];
+
+var defaultClicks = [
+  {url:'https://portal.griffincapital.com/ACPE/s/login/?ec=302&start…', u:25, t:31, dlLabel:'K-1 & Financials', dlUrl:'', sfReport:''},
+  {url:'https://gcpe.my.salesforce.com/sfc/p/5f0000091HDN/a/Pn000007…', u:21, t:27, dlLabel:'', dlUrl:'', sfReport:''},
+  {url:'https://portal.griffincapital.com', u:20, t:23, dlLabel:'', dlUrl:'', sfReport:''},
+  {url:'https://www.griffincapital.com/', u:8, t:10, dlLabel:'', dlUrl:'', sfReport:''},
+  {url:'https://www.griffincapital.com', u:8, t:10, dlLabel:'', dlUrl:'', sfReport:''},
+  {url:'https://go.griffincapital.com/ReasonUnsubscribing', u:4, t:5, dlLabel:'', dlUrl:'', sfReport:''},
+  {url:'https://www.linkedin.com/company/griffin-capital/', u:3, t:4, dlLabel:'', dlUrl:'', sfReport:''}
+];
+
+/* ── Utility ── */
+function $id(s) { return document.getElementById(s); }
+function pct(n,d) { return d ? (n/d*100).toFixed(2)+'%' : '0.00%'; }
+function pn(n,d)  { return d ? n/d*100 : 0; }
+function ev(s)    { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+/* ── Modal ── */
+function openModal(modalId) {
+  if (modalId === 'data-modal') populateCE(currentClicks);
+  $id(modalId).classList.add('open');
+}
+function closeModal(modalId) {
+  $id(modalId).classList.remove('open');
+}
+
+/* ── Email preview — write HTML into new tab ── */
+function showEmailPreview() {
+  var html = ($id('html-input').value || '').trim();
+  if (!html) html = $id('default-email-html').value;
+
+  /* Inject a scroll-reset style so the full email is always visible */
+  var scrollFix = '<style>html,body{height:auto!important;min-height:0!important;overflow:visible!important;overflow-y:auto!important}</style>';
+  html = html.replace(/<\/head>/i, scrollFix + '</head>');
+
+  var win = window.open('', '_blank');
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  closeModal('html-modal');
+}
+
+function closeEmailPreview() {
+  /* no-op — preview opens in its own tab now */
+}
+
+/* ── Print — open dashboard in new tab, auto-print ── */
+function doPrint() {
+  var dashHTML = $id('dashboard').innerHTML;
+
+  var styleText = '';
+  for (var i = 0; i < document.styleSheets.length; i++) {
+    try {
+      var rules = document.styleSheets[i].cssRules || document.styleSheets[i].rules || [];
+      for (var j = 0; j < rules.length; j++) styleText += rules[j].cssText + '\n';
+    } catch(e) {}
+  }
+
+  var printHTML = '<!DOCTYPE html><html><head>'
+    + '<meta charset="UTF-8">'
+    + '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">'
+    + '<style>' + styleText + 'body{background:#fff;font-family:Lato,Arial,sans-serif;margin:0;padding:1rem}.topbar,.mbg{display:none!important}.main{max-width:100%!important;padding:0.5rem!important}</style>'
+    + '</head><body>'
+    + '<div class="main">' + dashHTML + '</div>'
+    + '<script>window.addEventListener("load",function(){window.print();});<\/script>'
+    + '</body></html>';
+
+  var win = window.open('', '_blank');
+  win.document.open();
+  win.document.write(printHTML);
+  win.document.close();
+}
+
+/* ── Click rows ── */
+function getClicks() {
+  var rows = document.querySelectorAll('#ce .crow');
+  var res = [];
+  rows.forEach(function(r) {
+    var ins = r.querySelectorAll('input');
+    var url = ins[0].value.trim(), u = parseInt(ins[1].value)||0, t = parseInt(ins[2].value)||0;
+    var dl = ins[3] ? ins[3].value.trim() : '', du = ins[4] ? ins[4].value.trim() : '';
+    var sfReport = ins[5] ? ins[5].value.trim() : '';
+    if (url) res.push({url:url, u:u, t:t, dlLabel:dl, dlUrl:du, sfReport:sfReport});
+  });
+  return res;
+}
+
+function addRow(data) {
+  data = data || {url:'', u:0, t:0, dlLabel:'', dlUrl:'', sfReport:''};
+  var row = document.createElement('div');
+  row.className = 'crow';
+  row.innerHTML = '<input type="text" value="'+ev(data.url)+'" placeholder="https://…">'
+    + '<input type="number" value="'+data.u+'">'
+    + '<input type="number" value="'+data.t+'">'
+    + '<div class="crow-dl">'
+    +   '<input type="text" value="'+ev(data.dlLabel)+'" placeholder="File label">'
+    +   '<input type="text" value="'+ev(data.dlUrl)+'" placeholder="SharePoint / Drive URL">'
+    + '</div>'
+    + '<input type="text" value="'+ev(data.sfReport||'')+'" placeholder="Salesforce report URL…" style="font-size:10px">'
+    + '<button class="btn-rm" type="button">&#x2212;</button>';
+  $id('ce').appendChild(row);
+}
+
+function populateCE(clicks) {
+  $id('ce').innerHTML = '';
+  clicks.forEach(function(c) { addRow(c); });
+}
+
+/* ── Dashboard ── */
+function buildDash() {
+  var campaign   = $id('f-campaign').value;
+  var sfCampaignUrl = ($id('f-sf-campaign-url').value||'').trim();
+  var subject    = $id('f-subject').value;
+  var date       = $id('f-date').value;
+  var author     = $id('f-author').value;
+  var lists      = $id('f-lists').value;
+  var sendtype   = $id('f-sendtype').value;
+  var sent       = parseInt($id('f-sent').value)||0;
+  var delivered  = parseInt($id('f-delivered').value)||0;
+  var soft       = parseInt($id('f-soft').value)||0;
+  var hard       = parseInt($id('f-hard').value)||0;
+  var totalopens = parseInt($id('f-totalopens').value)||0;
+  var opens      = parseInt($id('f-opens').value)||0;
+  var tclicks    = parseInt($id('f-tclicks').value)||0;
+  var uclicks    = parseInt($id('f-uclicks').value)||0;
+  var optouts    = parseInt($id('f-optouts').value)||0;
+  var spam       = parseInt($id('f-spam').value)||0;
+  var prospects  = parseInt($id('f-prospects').value)||0;
+  var unmailable = parseInt($id('f-unmailable').value)||0;
+  var bounced    = soft + hard;
+  var clicks     = currentClicks;
+
+  var delivRate  = pct(delivered,sent), openRate = pct(opens,sent), ctoOpen = pct(uclicks,opens);
+  var tctRate    = pct(tclicks,sent), uctRate = pct(uclicks,sent);
+  var optoutRate = pct(optouts,sent), spamRate = pct(spam,sent);
+  var unopened   = Math.max(0, sent-opens-bounced);
+  var openPct    = pn(opens,sent), unopenedPct = pn(unopened,sent), bouncedPct = pn(bounced,sent);
+  var delBar     = Math.min(100, pn(delivered,sent)).toFixed(1);
+  var openBar    = Math.min(100, pn(opens,sent)).toFixed(1);
+  var clickBar   = Math.min(100, pn(uclicks,sent)).toFixed(1);
+  var maxC       = clicks.reduce(function(m,c) { return Math.max(m,c.t); }, 1);
+
+  var olLabel = ($id('f-ol-label').value||'').trim();
+  var olUrl   = ($id('f-ol-url').value||'').trim();
+  var extI = '<svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1V9"/><path d="M10 2h4v4"/><line x1="14" y1="2" x2="7" y2="9"/></svg>';
+  var openedBadge = '';
+  if (olLabel && olUrl) openedBadge = '<a href="'+ev(olUrl)+'" target="_blank" class="d-link">'+extI+' '+olLabel+'</a>';
+  else if (olLabel)     openedBadge = '<span class="d-link" style="cursor:default;opacity:.55">'+extI+' '+olLabel+'</span>';
+
+  var dlI = '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3"/><path d="M3 12h10"/></svg>';
+  var sfI = '<svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1V9"/><path d="M10 2h4v4"/><line x1="14" y1="2" x2="7" y2="9"/></svg>';
+  var crows = clicks.map(function(c) {
+    var bw = Math.round(c.t/maxC*100), dlc='', sfc='';
+    if (c.dlLabel && c.dlUrl) dlc = '<a href="'+ev(c.dlUrl)+'" target="_blank" class="dl-badge">'+dlI+' '+c.dlLabel+'</a>';
+    else if (c.dlLabel)       dlc = '<span class="dl-badge" style="cursor:default;opacity:.6">'+dlI+' '+c.dlLabel+'</span>';
+    if (c.sfReport) sfc = '<a href="'+ev(c.sfReport)+'" target="_blank" class="sf-badge">'+sfI+' View in SF</a>';
+    return '<tr><td><span class="link-url" title="'+ev(c.url)+'">'+c.url+'</span>'
+      +'<div class="cbar"><div class="cbar-fill" style="width:'+bw+'%"></div></div></td>'
+      +'<td class="cn">'+c.u+'</td><td class="cn">'+c.t+'</td><td class="cd">'+dlc+'</td><td class="cd">'+sfc+'</td></tr>';
+  }).join('');
+
+  var R=58,CX=70,CY=70,CI=2*Math.PI*R;
+  var oL=CI*(opens/Math.max(sent,1)), uL=CI*(unopened/Math.max(sent,1)), bL=CI*(bounced/Math.max(sent,1));
+  function arc(cx,cy,r,a,len) {
+    if (len<=0) return '';
+    var e=a+len/r, x1=cx+r*Math.cos(a), y1=cy+r*Math.sin(a);
+    var x2=cx+r*Math.cos(e), y2=cy+r*Math.sin(e), lg=(len/r)>Math.PI?1:0;
+    return 'M '+x1.toFixed(2)+' '+y1.toFixed(2)+' A '+r+' '+r+' 0 '+lg+' 1 '+x2.toFixed(2)+' '+y2.toFixed(2);
+  }
+  var a0=-Math.PI/2, a1=a0+oL/R, a2=a1+uL/R;
+  var now=new Date();
+  var ts=now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+        +' · '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+  var campaignTag = sfCampaignUrl
+    ? '<a href="'+ev(sfCampaignUrl)+'" target="_blank" class="email-tag sf-campaign-link">'+sfI+' '+campaign+'</a>'
+    : '<span class="email-tag">'+campaign+'</span>';
+
+  var h = '';
+  h += '<div class="email-hdr"><div class="email-hdr-main">'
+    + campaignTag
+    + '<div class="email-subject">'+subject+'</div>'
+    + '<div class="meta-row">'
+    + '<div class="meta-chip">Sent&nbsp;<strong>'+date+'</strong></div><div class="meta-sep"></div>'
+    + '<div class="meta-chip">By&nbsp;<strong>'+author+'</strong></div><div class="meta-sep"></div>'
+    + '<div class="meta-chip">Type&nbsp;<strong>'+sendtype+'</strong></div>'
+    + '</div></div>'
+    + '<div class="sent-badge"><div class="sent-dot"></div>All '+sent+' emails sent</div></div>';
+
+  h += '<div class="kpi-row">'
+    + '<div class="kpi"><div class="kpi-val">'+delivRate+'</div><div class="kpi-lbl">Delivery Rate</div><div class="kpi-sub">'+delivered+' of '+sent+' delivered</div></div>'
+    + '<div class="kpi"><div class="kpi-val">'+openRate+'</div><div class="kpi-lbl">HTML Open Rate</div><div class="kpi-sub">'+opens+' unique opens</div></div>'
+    + '<div class="kpi"><div class="kpi-val">'+ctoOpen+'</div><div class="kpi-lbl">Click to Open Ratio</div><div class="kpi-sub">'+uclicks+' unique clicks</div></div>'
+    + '</div>';
+
+  h += '<div class="two-col">';
+
+  h += '<div class="card"><div class="card-hdr">Send &amp; Engagement Breakdown</div><div class="card-body">'
+    + '<div class="bar-section">'
+    + '<div class="bar-row"><div class="bar-meta"><span class="bar-lbl">Delivery rate</span><span class="bar-pct">'+delBar+'%</span></div><div class="bar-track"><div class="bar-fill bf-b" style="width:'+delBar+'%"></div></div></div>'
+    + '<div class="bar-row"><div class="bar-meta"><span class="bar-lbl">HTML open rate</span><span class="bar-pct">'+openBar+'%</span></div><div class="bar-track"><div class="bar-fill bf-o" style="width:'+openBar+'%"></div></div></div>'
+    + '<div class="bar-row"><div class="bar-meta"><span class="bar-lbl">Unique click-through rate</span><span class="bar-pct">'+clickBar+'%</span></div><div class="bar-track"><div class="bar-fill bf-s" style="width:'+clickBar+'%"></div></div></div>'
+    + '</div>'
+    + '<table class="stbl">'
+    + '<tr class="grp"><td colspan="2">Volume</td></tr>'
+    + '<tr><td>Total sent</td><td class="v-o">'+sent+'</td></tr>'
+    + '<tr><td>Total delivered</td><td class="v-o">'+delivered+'</td></tr>'
+    + '<tr><td>Total bounced</td><td>'+(bounced>0?'<span style="color:#c0392b">'+soft+' soft &amp; '+hard+' hard</span>':'0')+'</td></tr>'
+    + '<tr><td>Delivery rate</td><td>'+delivRate+'</td></tr>'
+    + '<tr class="grp"><td colspan="2">Opens</td></tr>'
+    + '<tr><td>Total HTML opens</td><td class="v-o">'+totalopens+'</td></tr>'
+    + '<tr><td>Unique HTML opens</td><td class="v-o">'+opens+'</td></tr>'
+    + '<tr><td>HTML open rate</td><td>'+openRate+'</td></tr>'
+    + '<tr class="grp"><td colspan="2">Clicks</td></tr>'
+    + '<tr><td>Total clicks</td><td class="v-o">'+tclicks+'</td></tr>'
+    + '<tr><td>Total click-through rate</td><td>'+tctRate+'</td></tr>'
+    + '<tr><td>Unique clicks</td><td class="v-o">'+uclicks+'</td></tr>'
+    + '<tr><td>Unique click-through rate</td><td>'+uctRate+'</td></tr>'
+    + '<tr><td>Click to open ratio</td><td>'+ctoOpen+'</td></tr>'
+    + '<tr class="grp"><td colspan="2">Compliance</td></tr>'
+    + '<tr><td>Total opt outs</td><td>'+(optouts>0?'<span style="color:#d97706">'+optouts+'</span>':'0')+'</td></tr>'
+    + '<tr><td>Opt out rate</td><td>'+optoutRate+'</td></tr>'
+    + '<tr><td>Spam complaints</td><td>'+spam+'</td></tr>'
+    + '<tr><td>Spam complaint rate</td><td>'+spamRate+'</td></tr>'
+    + '<tr class="grp"><td colspan="2">List</td></tr>'
+    + '<tr><td>Prospects on recipient lists</td><td>'+prospects+'</td></tr>'
+    + '<tr><td>Unmailable prospects</td><td>'+(unmailable>0?'<span style="color:#7c98ab">'+unmailable+'</span>':'0')+'</td></tr>'
+    + '<tr><td>Sent to</td><td style="font-size:10px;color:#435363;font-weight:700">'+lists+'</td></tr>'
+    + '</table></div></div>';
+
+  h += '<div class="card"><div class="card-hdr">Open Rate</div><div class="card-body"><div class="donut-wrap">'
+    + '<svg width="140" height="140" viewBox="0 0 140 140">'
+    + '<circle cx="'+CX+'" cy="'+CY+'" r="'+R+'" fill="none" stroke="#F2F2F5" stroke-width="18"/>'
+    + (oL>0?'<path d="'+arc(CX,CY,R,a0,oL)+'" fill="none" stroke="#EE7624" stroke-width="18"/>':'')
+    + (uL>0?'<path d="'+arc(CX,CY,R,a1,uL)+'" fill="none" stroke="#7C98AB" stroke-width="18"/>':'')
+    + (bL>0?'<path d="'+arc(CX,CY,R,a2,bL)+'" fill="none" stroke="#1E3641" stroke-width="18"/>':'')
+    + '<text x="'+CX+'" y="'+(CY-5)+'" text-anchor="middle" font-size="22" font-weight="900" font-family="Lato,Arial,sans-serif" fill="#EE7624">'+openPct.toFixed(1)+'%</text>'
+    + '<text x="'+CX+'" y="'+(CY+12)+'" text-anchor="middle" font-size="8.5" font-weight="700" font-family="Lato,Arial,sans-serif" fill="#7C98AB" letter-spacing="1.5">OPEN RATE</text>'
+    + '</svg>'
+    + '<div class="d-legend">'
+    + '<div class="d-item"><div class="d-swatch" style="background:#EE7624"></div><span class="d-name">Opened</span><span class="d-count">'+opens+'</span><span class="d-pct">'+openPct.toFixed(2)+'%</span>'+openedBadge+'</div>'
+    + '<div class="d-item"><div class="d-swatch" style="background:#7C98AB"></div><span class="d-name">Unopened</span><span class="d-count">'+unopened+'</span><span class="d-pct">'+unopenedPct.toFixed(2)+'%</span></div>'
+    + '<div class="d-item"><div class="d-swatch" style="background:#1E3641"></div><span class="d-name">Bounced</span><span class="d-count">'+bounced+'</span><span class="d-pct">'+bouncedPct.toFixed(2)+'%</span></div>'
+    + '</div></div></div></div>';
+
+  h += '</div>';
+
+  h += '<div class="card"><div class="card-hdr">Link Clicks</div>'
+    + '<table class="ctbl"><thead><tr><th>URL</th><th class="cn">Unique</th><th class="cn">Total</th><th class="cd">Download</th><th class="cd">SF Report</th></tr></thead>'
+    + '<tbody>'+crows+'</tbody></table></div>';
+
+  h += '<div class="pg-footer">'
+    + '<div class="pg-footer-l">Griffin Capital Company, LLC &mdash; Account Engagement Report</div>'
+    + '<div class="pg-footer-r">Generated '+ts+'</div></div>';
+
+  $id('dashboard').innerHTML = h;
+}
+
+/* =============================================================
+   IMPORT — bookmarklet + paste parser
+   ============================================================= */
+
+/* The bookmarklet code that runs on the MCAE report page */
+function buildBookmarkletCode() {
+  return '(function(){'
+    + 'var d={};var clicks=[];'
+    + 'document.querySelectorAll("table tr").forEach(function(r){'
+    +   'var c=r.querySelectorAll("td,th");'
+    +   'if(c.length>=2){'
+    +     'var first=c[0].innerText.trim();'
+    +     'var last=c[c.length-1].innerText.trim();'
+    +     'if(first.match(/^https?:\\/\\//)){'
+    +       'var nums=[];'
+    +       'for(var i=1;i<c.length;i++){var n=parseInt(c[i].innerText.trim());if(!isNaN(n))nums.push(n);}'
+    +       'if(nums.length>=2)clicks.push({url:first,u:nums[0],t:nums[1],dlLabel:"",dlUrl:"",sfReport:""});'
+    +     '}else if(first&&last){d[first]=last;}'
+    +   '}'
+    + '});'
+    + 'document.querySelectorAll(".slds-form-element,.detail-row,.detailRow").forEach(function(el){'
+    +   'var lbl=el.querySelector("label,.slds-form-element__label,.detailLabel");'
+    +   'var val=el.querySelector(".slds-form-element__static,.detailData,span,input");'
+    +   'if(lbl&&val&&lbl.innerText.trim())d[lbl.innerText.trim()]=val.innerText.trim()||val.value||"";'
+    + '});'
+    + 'try{d["__title__"]=document.title;}catch(e){}'
+    + 'd["__clicks__"]=JSON.stringify(clicks);'
+    /* Try to get the tool URL from localStorage (saved by the user in the bookmarklet tab) */
+    + 'var toolUrl="";'
+    + 'try{toolUrl=localStorage.getItem("gceph_tool_url")||"";}catch(e){}'
+    + 'var payload=JSON.stringify(d);'
+    /* Base64 encode safely */
+    + 'var b64="";'
+    + 'try{b64=btoa(unescape(encodeURIComponent(payload)));}catch(e){}'
+    + 'if(toolUrl&&b64){'
+    /* Open the tool with all data encoded in the URL — fully pre-populated */
+    +   'window.open(toolUrl+"?d="+b64,"_blank");'
+    + '}else if(b64){'
+    /* Fallback: copy to clipboard if no tool URL is configured */
+    +   'var out="GCAE-IMPORT::"+payload;'
+    +   'try{'
+    +     'navigator.clipboard.writeText(out).then(function(){'
+    +       'alert("Data copied ('+clicks.length+' link rows)!\\n\\nTip: set your tool URL in the Bookmarklet tab to skip this step and open the report automatically.");'
+    +     '});'
+    +   '}catch(e){'
+    +     'var ta=document.createElement("textarea");ta.value=out;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();document.execCommand("copy");document.body.removeChild(ta);'
+    +     'alert("Data copied! Paste into your report tool.");'
+    +   '}'
+    + '}else{alert("Could not read page data. Make sure you are on an MCAE email report page.");}'
+    + '})();';
+}
+
+/* Parse pasted text — handles bookmarklet JSON and raw copy-paste */
+function parseImportText(raw) {
+  var data = {};
+  var clicks = [];
+
+  /* ── Bookmarklet JSON path ── */
+  if (raw.indexOf('GCAE-IMPORT::') === 0) {
+    try {
+      var obj = JSON.parse(raw.slice('GCAE-IMPORT::'.length));
+
+      /* Extract embedded clicks array */
+      if (obj['__clicks__']) {
+        try { clicks = JSON.parse(obj['__clicks__']); } catch(e) {}
+        delete obj['__clicks__'];
+      }
+
+      /* Normalise remaining keys */
+      Object.keys(obj).forEach(function(k) {
+        data[k.toLowerCase().replace(/[^a-z0-9]/g, '')] = obj[k];
+      });
+    } catch(e) {}
+  }
+
+  /* ── Plain-text fallback (raw copy-paste from browser) ── */
+  var lines = raw.split(/\n/);
+  lines.forEach(function(line) {
+    var trimmed = line.trim();
+    if (!trimmed) return;
+
+    /* Detect click rows: line starts with https:// and ends with two numbers
+       e.g.  "https://portal.griffincapital.com/ACPE...    40    45"  */
+    var urlM = trimmed.match(/^(https?:\/\/\S+)\s+(\d+)\s+(\d+)\s*$/);
+    if (urlM) {
+      clicks.push({ url: urlM[1], u: parseInt(urlM[2]), t: parseInt(urlM[3]), dlLabel: '', dlUrl: '' });
+      return;
+    }
+
+    /* Label → Value (two or more spaces or tab separator) */
+    var m = trimmed.match(/^(.+?)\s{2,}(.+)$/) || trimmed.match(/^(.+?)\t(.+)$/);
+    if (m) {
+      var k = m[1].trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+      var v = m[2].trim();
+      if (k && v && !data[k]) data[k] = v;
+    }
+
+    /* Label: Value */
+    var m2 = trimmed.match(/^(.+?):\s+(.+)$/);
+    if (m2) {
+      var k2 = m2[1].trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+      var v2 = m2[2].trim();
+      if (k2 && v2 && !data[k2]) data[k2] = v2;
+    }
+  });
+
+  return { data: data, clicks: clicks };
+}
+
+/* Extract a numeric value from parsed data */
+function extractNum(data, keys) {
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i].toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (data[k] !== undefined) {
+      var n = parseInt(String(data[k]).replace(/[^0-9]/g, ''), 10);
+      if (!isNaN(n)) return n;
+    }
+  }
+  return null;
+}
+
+/* Extract a string value */
+function extractStr(data, keys) {
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i].toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (data[k] && String(data[k]).trim()) return String(data[k]).trim();
+  }
+  return null;
+}
+
+/* Apply parsed data to form fields, populate click rows, and show preview */
+function applyImportData(parsed) {
+  var data   = parsed.data;
+  var clicks = parsed.clicks;
+  var applied = [];
+  var missed  = [];
+
+  function set(fieldId, val, label) {
+    if (val !== null && val !== undefined && String(val).trim() !== '') {
+      var el = $id(fieldId);
+      if (el) { el.value = val; applied.push(label + ': ' + val); return true; }
+    }
+    missed.push(label);
+    return false;
+  }
+
+  /* Bounce parsing */
+  var bouncedRaw = extractStr(data, ['Total Bounced','Bounced']) || '';
+  var softM = bouncedRaw.match(/(\d+)\s*soft/i);
+  var hardM = bouncedRaw.match(/(\d+)\s*hard/i);
+
+  set('f-campaign',   extractStr(data, ['Campaign','__title__']) || '', 'Campaign');
+  set('f-subject',    extractStr(data, ['Subject','Subject Line']) || '', 'Subject');
+  set('f-date',       extractStr(data, ['Started At','Sent At','Send Date']) || '', 'Sent date');
+  set('f-author',     extractStr(data, ['Created By','Author']) || '', 'Created by');
+  set('f-lists',      extractStr(data, ['Sent To','Lists','Recipient Lists']) || '', 'Sent to');
+  set('f-sendtype',   extractStr(data, ['Email Send Type','Send Type']) || '', 'Send type');
+  set('f-sent',       extractNum(data, ['Total Sent','Sent']), 'Total sent');
+  set('f-delivered',  extractNum(data, ['Total Delivered','Delivered']), 'Delivered');
+  set('f-soft',       softM ? parseInt(softM[1]) : extractNum(data, ['Soft Bounced','Soft']), 'Bounced soft');
+  set('f-hard',       hardM ? parseInt(hardM[1]) : extractNum(data, ['Hard Bounced','Hard']), 'Bounced hard');
+  set('f-totalopens', extractNum(data, ['Total HTML Opens','Total Opens']), 'Total opens');
+  set('f-opens',      extractNum(data, ['Unique HTML Opens','Unique Opens']), 'Unique opens');
+  set('f-tclicks',    extractNum(data, ['Total Clicks','Clicks']), 'Total clicks');
+  set('f-uclicks',    extractNum(data, ['Unique Clicks']), 'Unique clicks');
+  set('f-optouts',    extractNum(data, ['Total Opt Outs','Opt Outs']), 'Opt outs');
+  set('f-spam',       extractNum(data, ['Total Spam Complaints','Spam Complaints']), 'Spam');
+  set('f-prospects',  extractNum(data, ['Prospects on Recipient Lists','Recipient Lists']), 'Prospects');
+  set('f-unmailable', extractNum(data, ['Unmailable Prospects','Unmailable']), 'Unmailable');
+
+  /* Populate click rows if any were found */
+  if (clicks && clicks.length > 0) {
+    currentClicks = clicks.map(function(c) {
+      return { url: c.url, u: c.u || 0, t: c.t || 0, dlLabel: c.dlLabel || '', dlUrl: c.dlUrl || '' };
+    });
+    applied.push('Link clicks: ' + clicks.length + ' rows');
+  }
+
+  return { applied: applied, missed: missed };
+}
+
+/* Run the import when button is clicked */
+function runImport() {
+  var raw = ($id('imp-paste-input').value || '').trim();
+  var resultEl  = $id('imp-result');
+  var previewEl = $id('imp-field-preview');
+
+  if (!raw) {
+    resultEl.className = 'imp-result err';
+    resultEl.textContent = 'Nothing to parse — please paste your MCAE report text first.';
+    previewEl.style.display = 'none';
+    return;
+  }
+
+  var parsed = parseImportText(raw);
+
+  if (Object.keys(parsed.data).length === 0 && parsed.clicks.length === 0) {
+    resultEl.className = 'imp-result err';
+    resultEl.textContent = 'Could not find any data. Try selecting all text on the MCAE report page (Ctrl+A / Cmd+A) then copying and pasting here.';
+    previewEl.style.display = 'none';
+    return;
+  }
+
+  var result = applyImportData(parsed);
+
+  if (result.applied.length === 0) {
+    resultEl.className = 'imp-result err';
+    resultEl.textContent = 'Pasted text found but no matching fields could be extracted. Make sure you copied from the MCAE email report page.';
+    previewEl.style.display = 'none';
+    return;
+  }
+
+  /* Success message */
+  var clickMsg = parsed.clicks.length > 0 ? ' + ' + parsed.clicks.length + ' link click rows.' : '';
+  resultEl.className = 'imp-result ok';
+  resultEl.textContent = result.applied.length + ' fields imported successfully' + clickMsg + ' Dashboard updated — close this modal to review.';
+
+  /* Field preview cards */
+  var previewHTML = result.applied.slice(0, 8).map(function(s) {
+    var parts = s.split(': ');
+    return '<div class="imp-field-preview-item"><span>' + parts[0] + '</span>' + parts.slice(1).join(': ') + '</div>';
+  }).join('');
+  previewEl.innerHTML = previewHTML;
+  previewEl.style.display = 'grid';
+
+  /* Rebuild dashboard immediately */
+  buildDash();
+}
+
+/* =============================================================
+   REPORT LIBRARY — localStorage save / load / delete
+   ============================================================= */
+var LIB_PREFIX = 'gceph_';
+
+function getAllFields() {
+  var fields = ['f-campaign','f-sf-campaign-url','f-subject','f-date','f-author',
+    'f-lists','f-sendtype','f-sent','f-delivered','f-soft','f-hard',
+    'f-totalopens','f-opens','f-tclicks','f-uclicks','f-optouts',
+    'f-spam','f-prospects','f-unmailable','f-ol-label','f-ol-url'];
+  var out = {};
+  fields.forEach(function(id) {
+    var el = $id(id);
+    if (el) out[id] = el.value;
+  });
+  out['__clicks__'] = JSON.stringify(currentClicks);
+  return out;
+}
+
+function applyAllFields(snapshot) {
+  Object.keys(snapshot).forEach(function(id) {
+    if (id === '__clicks__') return;
+    var el = $id(id);
+    if (el) el.value = snapshot[id];
+  });
+  if (snapshot['__clicks__']) {
+    try { currentClicks = JSON.parse(snapshot['__clicks__']); } catch(e) {}
+  }
+}
+
+function libKey(ts) { return LIB_PREFIX + ts; }
+
+function saveToLibrary(name) {
+  var snapshot = getAllFields();
+  snapshot['__name__'] = name;
+  snapshot['__ts__']   = Date.now();
+  snapshot['__date__'] = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  try {
+    localStorage.setItem(libKey(snapshot['__ts__']), JSON.stringify(snapshot));
+    updateLibCount();
+    return true;
+  } catch(e) { return false; }
+}
+
+function loadFromLibrary(ts) {
+  try {
+    var raw = localStorage.getItem(libKey(ts));
+    if (!raw) return false;
+    var snap = JSON.parse(raw);
+    applyAllFields(snap);
+    buildDash();
+    return snap['__name__'] || 'Report';
+  } catch(e) { return false; }
+}
+
+function deleteFromLibrary(ts) {
+  try { localStorage.removeItem(libKey(ts)); updateLibCount(); return true; }
+  catch(e) { return false; }
+}
+
+function getLibraryEntries() {
+  var entries = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (key && key.indexOf(LIB_PREFIX) === 0) {
+      try {
+        var snap = JSON.parse(localStorage.getItem(key));
+        entries.push({ ts: snap['__ts__'], name: snap['__name__'] || 'Untitled', date: snap['__date__'] || '', campaign: snap['f-campaign'] || '' });
+      } catch(e) {}
+    }
+  }
+  entries.sort(function(a,b) { return b.ts - a.ts; });
+  return entries;
+}
+
+function updateLibCount() {
+  var n = getLibraryEntries().length;
+  var el = $id('lib-count');
+  if (el) { el.textContent = n; el.style.display = n > 0 ? 'inline-block' : 'none'; }
+}
+
+function renderLibrary() {
+  var wrap = $id('lib-list-wrap');
+  if (!wrap) return;
+  var entries = getLibraryEntries();
+  if (entries.length === 0) {
+    wrap.innerHTML = '<div class="lib-empty">'
+      + '<svg width="32" height="32" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="4" height="12" rx="1"/><rect x="6" y="2" width="4" height="12" rx="1"/><rect x="11" y="2" width="4" height="12" rx="1"/></svg>'
+      + 'No saved reports yet. Import an email and click <strong>Save current report</strong> below.</div>';
+    return;
+  }
+  var html = '<div class="lib-list">';
+  entries.forEach(function(e) {
+    html += '<div class="lib-item">'
+      + '<div class="lib-item-info">'
+      + '<div class="lib-item-name">' + e.name + '</div>'
+      + '<div class="lib-item-meta">' + (e.campaign ? e.campaign + ' &nbsp;&middot;&nbsp; ' : '') + 'Saved ' + e.date + '</div>'
+      + '</div>'
+      + '<div class="lib-item-actions">'
+      + '<button class="btn-lib-load" data-ts="' + e.ts + '">Load</button>'
+      + '<button class="btn-lib-del" data-ts="' + e.ts + '">Delete</button>'
+      + '</div></div>';
+  });
+  html += '</div>';
+  wrap.innerHTML = html;
+
+  /* Wire load/delete buttons */
+  wrap.querySelectorAll('.btn-lib-load').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var name = loadFromLibrary(parseInt(this.dataset.ts));
+      if (name) { closeModal('lib-modal'); }
+    });
+  });
+  wrap.querySelectorAll('.btn-lib-del').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (confirm('Delete "' + this.closest('.lib-item').querySelector('.lib-item-name').textContent + '"?')) {
+        deleteFromLibrary(parseInt(this.dataset.ts));
+        renderLibrary();
+      }
+    });
+  });
+}
+
+/* =============================================================
+   URL PARAMETER — serialize / deserialize for bookmarklet launch
+   ============================================================= */
+function serializeReport(snapshot) {
+  try { return btoa(unescape(encodeURIComponent(JSON.stringify(snapshot)))); }
+  catch(e) { return null; }
+}
+
+function deserializeReport(b64) {
+  try { return JSON.parse(decodeURIComponent(escape(atob(b64)))); }
+  catch(e) { return null; }
+}
+
+function loadFromUrlParams() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var d = params.get('d');
+    if (!d) return false;
+    var snap = deserializeReport(d);
+    if (!snap) return false;
+    applyAllFields(snap);
+    buildDash();
+    /* Show the auto-load banner */
+    var banner = $id('launch-banner');
+    if (banner) banner.classList.add('show');
+    /* Clean the URL without reloading */
+    try { history.replaceState({}, '', window.location.pathname); } catch(e) {}
+    return true;
+  } catch(e) { return false; }
+}
+
+/* =============================================================
+   INIT — wire up all buttons after DOM is ready
+   ============================================================= */
+document.addEventListener('DOMContentLoaded', function() {
+
+  function on(id, evt, fn) {
+    var el = $id(id);
+    if (el) el.addEventListener(evt, fn);
+  }
+
+  /* Logo fallback */
+  var logo = $id('gc-logo');
+  if (logo) logo.addEventListener('error', function() {
+    this.style.display = 'none';
+    var fb = $id('gc-fb');
+    if (fb) fb.style.display = 'block';
+  });
+
+  /* Topbar */
+  on('btn-edit-data',     'click', function() { openModal('data-modal'); });
+  on('btn-library',       'click', function() { renderLibrary(); openModal('lib-modal'); });
+  on('btn-import',        'click', function() { openModal('import-modal'); });
+  on('btn-email-html',    'click', function() { openModal('html-modal'); });
+  on('btn-preview-email', 'click', function() { showEmailPreview(); });
+  on('btn-print',         'click', function() { doPrint(); });
+
+  var printBtn = $id('btn-print');
+  if (printBtn) {
+    printBtn.addEventListener('mouseenter', function() { this.style.background='#1E3641'; this.style.borderColor='#1E3641'; });
+    printBtn.addEventListener('mouseleave', function() { this.style.background='#EE7624'; this.style.borderColor='#EE7624'; });
+  }
+
+  /* Launch banner close */
+  on('launch-banner-x', 'click', function() {
+    var b = $id('launch-banner');
+    if (b) b.classList.remove('show');
+  });
+
+  /* Library modal */
+  on('btn-lib-save', 'click', function() {
+    var nameEl = $id('lib-save-name');
+    var name = nameEl ? nameEl.value.trim() : '';
+    if (!name) { if (nameEl) nameEl.focus(); return; }
+    if (saveToLibrary(name)) {
+      nameEl.value = '';
+      renderLibrary();
+    }
+  });
+  on('lib-save-name', 'keydown', function(e) {
+    if (e.key === 'Enter') { var b = $id('btn-lib-save'); if (b) b.click(); }
+  });
+
+  /* Tool URL save */
+  on('btn-save-tool-url', 'click', function() {
+    var inp = $id('tool-url-input');
+    var status = $id('tool-url-status');
+    var url = inp ? inp.value.trim() : '';
+    if (!url) return;
+    try {
+      localStorage.setItem('gceph_tool_url', url);
+      if (status) { status.textContent = '✓ Saved — drag the bookmarklet again to pick up the new URL.'; status.style.color = '#0f9e82'; }
+      var bk = $id('bookmarklet-link');
+      if (bk) bk.href = 'javascript:' + buildBookmarkletCode();
+    } catch(e) {
+      if (status) { status.textContent = 'Could not save — localStorage may be blocked.'; status.style.color = '#c33'; }
+    }
+  });
+
+  /* Import modal tabs */
+  document.querySelectorAll('.imp-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.imp-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.imp-panel').forEach(function(p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      var panel = $id(tab.dataset.tab);
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  on('btn-run-import',   'click', function() { runImport(); });
+  on('imp-paste-input',  'input', function() {
+    var r = $id('imp-result'); if (r) r.className = 'imp-result';
+    var p = $id('imp-field-preview'); if (p) p.style.display = 'none';
+  });
+
+  /* Bookmarklet */
+  var bkLink = $id('bookmarklet-link');
+  if (bkLink) bkLink.href = 'javascript:' + buildBookmarkletCode();
+
+  /* HTML modal */
+  on('btn-clear-html',         'click', function() { var el = $id('html-input'); if (el) el.value = ''; });
+  on('btn-preview-from-modal', 'click', function() { showEmailPreview(); });
+
+  /* Data modal */
+  on('btn-add-row', 'click', function() { addRow(); });
+  on('btn-apply',   'click', function() {
+    currentClicks = getClicks();
+    buildDash();
+    closeModal('data-modal');
+  });
+
+  /* Backdrop / data-close */
+  document.addEventListener('click', function(e) {
+    if (e.target.dataset && e.target.dataset.close) closeModal(e.target.dataset.close);
+    if (e.target.classList && e.target.classList.contains('mbg')) closeModal(e.target.id);
+  });
+
+  /* Remove-row delegation */
+  var ce = $id('ce');
+  if (ce) ce.addEventListener('click', function(e) {
+    var btn = e.target.closest ? e.target.closest('.btn-rm') : null;
+    if (!btn && e.target.classList.contains('btn-rm')) btn = e.target;
+    if (btn) btn.parentNode.remove();
+  });
+
+  /* Set default tool URL */
+  try {
+    if (!localStorage.getItem('gceph_tool_url')) {
+      localStorage.setItem('gceph_tool_url', 'https://go.griffincapital.com/email-hub');
+    }
+    var savedUrl = localStorage.getItem('gceph_tool_url');
+    var urlInput = $id('tool-url-input');
+    if (urlInput && savedUrl) urlInput.value = savedUrl;
+  } catch(e) {}
+
+  /* Pre-fill tool URL status */
+  try {
+    var savedTool = localStorage.getItem('gceph_tool_url');
+    var statusEl = $id('tool-url-status');
+    if (statusEl && savedTool) {
+      statusEl.textContent = '✓ Tool URL set: ' + savedTool;
+      statusEl.style.color = '#0f9e82';
+    }
+  } catch(e) {}
+
+  /* Boot */
+  currentClicks = defaultClicks.slice();
+  var htmlInput = $id('html-input');
+  var defaultHtml = $id('default-email-html');
+  if (htmlInput && defaultHtml) htmlInput.value = defaultHtml.value;
+
+  var loadedFromUrl = loadFromUrlParams();
+  if (!loadedFromUrl) buildDash();
+  updateLibCount();
+
+});
+</script>
+</body>
+</html>
